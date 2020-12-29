@@ -26,7 +26,7 @@ double declaration(bool is_const)
 	Token t2 = ts.get();
 	if (t2.kind != '=') error("= missing in declaration");
 	double d = expression();
-        /*   */
+    st.declare(name , d, is_const);
 	return d;
 }
 
@@ -100,15 +100,16 @@ double primary()
 	{
 	string n = t.name;
 	Token next = ts.get();
-	if (next.kind == '=') {  	// handle name = expression
-            double d = expression();
-	    /*   */
-            return d;
-	}
-	else {
-            ts.putback(next);		// not an assignment
-            /*   */                     // return the number's value
-	}
+        if (next.kind == '=') {  	// handle name = expression
+                double d = expression();
+                st.set(n ,d);
+                return d;
+        }
+        else {
+                ts.putback(next);		// not an assignment
+                Attributes a = st.get(n);
+                return a.value;           
+        }
 	}
     default:
         error("primary expected");

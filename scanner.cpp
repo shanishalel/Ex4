@@ -24,28 +24,28 @@ Token Token_stream::get()
     case '(': case ')': case '+': case '-': case '*': case '/': case '=': case 'q':
         return Token(ch);   // let each character represent itself
     default:
+    /* only 2 digit after the point*/
     if (isdigit(ch)) {
 	string s;
 	s += ch;
 	while (cin.get(ch) && (isdigit(ch) || ch == '.')) s += ch;
 	cin.unget();
-	/* if (regex_match() */
     regex twoDig("\\d+\\.\\d\\d");
-    if(s.find(".")!=string::npos){
-        if(regex_match(s,twoDig)){
+        if(s.find(".")!=string::npos){
+            if(regex_match(s,twoDig)){
+                return Token(number, stod(s));
+            }else{
+                error("Illegal number");
+            }
+        }
+        else{
             return Token(number, stod(s));
-        }else{
-            error("Illegal number");
         }
     }
-    else{
-	    return Token(number, stod(s));
-    }
-    }
-    if (isalpha(ch)/*   */) {
+    if (isalpha(ch) || ch =='_') {
 	string s;
 	s += ch;
-	while (cin.get(ch) && (isalpha(ch) || isdigit(ch)/*   */)) s += ch;
+	while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_')) s += ch;
 	cin.unget();
         if (s == "var") return Token(variable);	    
         if (s == "const") return Token(constant);	
